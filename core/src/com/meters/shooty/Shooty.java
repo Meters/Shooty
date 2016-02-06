@@ -30,7 +30,7 @@ public class Shooty extends ApplicationAdapter {
 
 	static final float TIME_INVULNERBILITY = 120;
 	static final float TIME_DEAD = 50;
-	static final float TIME_EXPLODE = 10;
+	static final float TIME_EXPLODE = 15;
 
 	SpriteBatch batch;
 //	Texture img;
@@ -42,6 +42,9 @@ public class Shooty extends ApplicationAdapter {
 	ArrayList<Tile> enemies;
 	ArrayList<Tile> bullets;
 	ArrayList<Tile> enemyBullets;
+
+
+	ArrayList<Tile> starField;
 
 	int screenWidth;
 	int screenHeight;
@@ -77,6 +80,8 @@ public class Shooty extends ApplicationAdapter {
 		enemies = new ArrayList<Tile>();
 		enemyBullets = new ArrayList<Tile>();
 
+		starField = new ArrayList<Tile>();
+
 		redColor = new Color(1,0,0,1);
 		greenColor = new Color(0,1,0,1);
 
@@ -99,11 +104,17 @@ public class Shooty extends ApplicationAdapter {
 
 		handlePlayer();
 
+//		generateStarField();
+
 		draw();
 
 //		limitFPS();
 
 	}
+
+//	private void generateStarField(){
+//		starField.add();
+//	}
 
 	private void handlePlayer(){
 		if(player.state == Tile.STATE_DED){
@@ -112,6 +123,12 @@ public class Shooty extends ApplicationAdapter {
 			if(player.clock > TIME_DEAD - TIME_EXPLODE){
 				player.rect.width = SIZE_PLAYER * (TIME_DEAD - player.clock);
 				player.rect.height = SIZE_PLAYER * (TIME_DEAD - player.clock);
+
+				player.rect.x = (lastX + SIZE_PLAYER / 2) - (player.rect.width / 2);
+				player.rect.y = (lastY + SIZE_PLAYER / 2) - (player.rect.height / 2);
+
+				player.c.a = 1 - ((TIME_DEAD - player.clock) / TIME_EXPLODE);
+				System.out.println(""+player.c.a);
 			}
 			else{
 				player.rect.width = 0;
@@ -119,6 +136,9 @@ public class Shooty extends ApplicationAdapter {
 			}
 
 			if(player.clock <= 0){
+				player.c.a = 1;
+				player.rect.x = lastX;
+				player.rect.y = lastY;
 				player.rect.width = SIZE_PLAYER;
 				player.rect.height = SIZE_PLAYER;
 				player.health = HEALTH_DEFAULT;
@@ -143,7 +163,13 @@ public class Shooty extends ApplicationAdapter {
 		Tile newEnemy = new Tile();
 		newEnemy.rect = new Rectangle(screenWidth / 2, screenHeight - 20, 20, 20);
 		newEnemy.c = new Color(1,.5f,0,1);
-		newEnemy.speed = SPEED_DEFAULT;
+		newEnemy.steps = new ArrayList<Step>();
+
+		newEnemy.steps.add(new Step(0, SPEED_DEFAULT, -SPEED_DEFAULT, false));
+		newEnemy.steps.add(new Step(30, 0, SPEED_DEFAULT, true));
+		newEnemy.steps.add(new Step(60, -SPEED_DEFAULT, -SPEED_DEFAULT, false));
+		newEnemy.steps.add(new Step(90, 0, SPEED_DEFAULT, true));
+		newEnemy.steps.add(new Step(120, 0, -SPEED_DEFAULT, false));
 
 		enemies.add(newEnemy);
 
@@ -152,17 +178,17 @@ public class Shooty extends ApplicationAdapter {
 	private void handleEnemy(){
 		ArrayList<Tile> toRemove = new ArrayList<Tile>();
 		for (Tile enemy : enemies) {
-			enemy.rect.x += enemy.speedX;
-			enemy.rect.y += enemy.speedY;
 
 			enemy.tick();
-			if(player.state == Tile.STATE_PLAYING){
-				if(Math.random() < 0.2){
-					addEnemyBulletToUser(enemy);
-				}
+			if(enemy.toFire){
+				enemy.toFire = false;
+				addEnemyBulletToUser(enemy);
 			}
 
-			if(enemy.rect.y < 0){
+			if(enemy.rect.y < 0 - enemy.rect.height
+					|| enemy.rect.y > screenHeight
+					|| enemy.rect.x < 0 - enemy.rect.width
+					|| enemy.rect.x > screenWidth){
 				toRemove.add(enemy);
 			}
 		}
@@ -243,8 +269,8 @@ public class Shooty extends ApplicationAdapter {
 
 		float angle = (float)Math.atan(diffX / diffY);
 
-		diffX = (float) (Math.sin(angle) * SPEED_DEFAULT / 2.5f);
-		diffY = (float) (Math.cos(angle) * SPEED_DEFAULT / 2.5f);
+		diffX = (float) (Math.sin(angle) * SPEED_DEFAULT * 2.5f);
+		diffY = (float) (Math.cos(angle) * SPEED_DEFAULT * 2.5f);
 
 		Tile newBullet = new Tile();
 		newBullet.rect = new Rectangle(enemy.rect.x, enemy.rect.y, 5, 5);
@@ -387,9 +413,9 @@ public class Shooty extends ApplicationAdapter {
 			bullet.rect.y += bullet.speedY;
 
 			if(bullet.rect.y > screenHeight
-					|| bullet.rect.y < 0
+					|| bullet.rect.y < 0 - bullet.rect.height
 					|| bullet.rect.x > screenWidth
-					|| bullet.rect.x < 0){
+					|| bullet.rect.x < 0 - bullet.rect.width){
 				toRemove.add(bullet);
 			}
 		}
@@ -399,7 +425,8 @@ public class Shooty extends ApplicationAdapter {
 	}
 
 	private void draw(){
-
+		Gdx.gl.glEnable(GL20.GL_BLEND);
+		Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
 		shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
 		//draw player
@@ -439,6 +466,7 @@ public class Shooty extends ApplicationAdapter {
 		}
 
 		shapeRenderer.end();
+		Gdx.gl.glDisable(GL20.GL_BLEND);
 
 		batch.begin();
 //		batch.draw(img, 0, 0);

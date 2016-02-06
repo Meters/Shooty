@@ -3,6 +3,8 @@ package com.meters.shooty;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.math.Rectangle;
 
+import java.util.ArrayList;
+
 /**
  * Created by Meters on 2/5/2016.
  */
@@ -12,32 +14,35 @@ public class Tile {
     public static int STATE_BLINKING = 1;
     public static int STATE_DED = 2;
 
+    ArrayList<Step> steps;
+    Step currentStep;
+    int stepCount;
+
     Rectangle rect;
     Color c;
     float speed;
 
     float speedX;
     float speedY;
+    boolean toFire;
 
     int clock;
-    int clock2;
-
     int state;
-
     int health;
 
     public void tick(){
-
         clock++;
-        if((clock2 % 360 < 10 || clock2 % 360 > 350) && clock % 3 == 0){
-
+        if(steps.size() > stepCount){
+            Step getStep = steps.get(stepCount);
+            if(getStep.tick <= clock){
+                currentStep = getStep;
+                speedX = currentStep.speedX;
+                speedY = currentStep.speedY;
+                stepCount++;
+            }
         }
-        else if(clock % 10 == 0){
-            clock2++;
-        }
-        speedX = (float)(speed * 2 * Math.cos(clock2));
-        speedY = -(float)(speed * Math.abs(Math.cos(clock2)) / 2);
-
+        rect.x += speedX;
+        rect.y += speedY;
     }
 
 }
