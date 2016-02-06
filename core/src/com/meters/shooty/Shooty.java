@@ -135,7 +135,7 @@ public class Shooty extends ApplicationAdapter {
 	}
 
 	private void spawnEnemy(){
-		if(System.currentTimeMillis() - lastEnemyTick < 200){
+		if(System.currentTimeMillis() - lastEnemyTick < 400){
 			return;
 		}
 		lastEnemyTick = System.currentTimeMillis();
@@ -157,7 +157,7 @@ public class Shooty extends ApplicationAdapter {
 
 			enemy.tick();
 			if(player.state == Tile.STATE_PLAYING){
-				if(Math.random() < 0.003){
+				if(Math.random() < 0.2){
 					addEnemyBulletToUser(enemy);
 				}
 			}
@@ -189,6 +189,16 @@ public class Shooty extends ApplicationAdapter {
 		enemies.removeAll(toRemove);
 
 		toRemove.clear();
+		for(Tile enemy : enemies){
+			if (enemy.rect.overlaps(player.rect)) {
+				toRemove.add(enemy);
+			}
+		}
+		enemies.removeAll(toRemove);
+
+		toRemove.clear();
+
+
 		for (Tile bullet : enemyBullets) {
 			if (bullet.rect.overlaps(player.rect)) {
 				toRemove.add(bullet);
