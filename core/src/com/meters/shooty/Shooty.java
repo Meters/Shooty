@@ -29,7 +29,7 @@ public class Shooty extends ApplicationAdapter {
 	static final float SPEED_BULLET_MULTIPLYER = 5f;
 
 	static final float TIME_INVULNERBILITY = 120;
-	static final float TIME_DEAD = 60;
+	static final float TIME_DEAD = 50;
 	static final float TIME_EXPLODE = 10;
 
 	SpriteBatch batch;
