@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="module_shooty" default="compile.module.shooty">
+  <dirname property="module.shooty.basedir" file="${ant.file.module_shooty}"/>
+  
+  <property name="module.jdk.home.shooty" value="${project.jdk.home}"/>
+  <property name="module.jdk.bin.shooty" value="${project.jdk.bin}"/>
+  <property name="module.jdk.classpath.shooty" value="${project.jdk.classpath}"/>
+  
+  <property name="compiler.args.shooty" value="-encoding UTF-8 -source 1.6 -target 1.6 ${compiler.args}"/>
+  
+  <property name="shooty.output.dir" value="${module.shooty.basedir}/build"/>
+  <property name="shooty.testoutput.dir" value="${module.shooty.basedir}/build"/>
+  
+  <path id="shooty.module.bootclasspath">
+    <!-- Paths to be included in compilation bootclasspath -->
+  </path>
+  
+  <path id="shooty.module.production.classpath">
+    <path refid="${module.jdk.classpath.shooty}"/>
+  </path>
+  
+  <path id="shooty.runtime.production.module.classpath">
+    <pathelement location="${shooty.output.dir}"/>
+  </path>
+  
+  <path id="shooty.module.classpath">
+    <path refid="${module.jdk.classpath.shooty}"/>
+    <pathelement location="${shooty.output.dir}"/>
+  </path>
+  
+  <path id="shooty.runtime.module.classpath">
+    <pathelement location="${shooty.output.dir}"/>
+  </path>
+  
+  
+  <patternset id="excluded.from.module.shooty">
+    <patternset refid="ignored.files"/>
+  </patternset>
+  
+  <patternset id="excluded.from.compilation.shooty">
+    <patternset refid="excluded.from.module.shooty"/>
+  </patternset>
+  
+  
+  <target name="compile.module.shooty" depends="compile.module.shooty.production,compile.module.shooty.tests" description="Compile module Shooty"/>
+  
+  <target name="compile.module.shooty.production" depends="register.custom.compilers" description="Compile module Shooty; production classes"/>
+  
+  <target name="compile.module.shooty.tests" depends="register.custom.compilers,compile.module.shooty.production" description="compile module Shooty; test classes" unless="skip.tests"/>
+  
+  <target name="clean.module.shooty" description="cleanup module">
+    <delete dir="${shooty.output.dir}"/>
+    <delete dir="${shooty.testoutput.dir}"/>
+  </target>
+</project>
