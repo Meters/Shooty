@@ -6,14 +6,13 @@ package com.meters.shooty;
 public class Step {
 
     int tick;
-    float speedX;
-    float speedY;
     boolean fire;
 
-    public Step(int tick, float speedX, float speedY, boolean fire){
+    Path path;
+
+    public Step(int tick, Path path, boolean fire){
         this.tick = tick;
-        this.speedX = speedX;
-        this.speedY = speedY;
+        this.path = path;
         this.fire = fire;
     }
 

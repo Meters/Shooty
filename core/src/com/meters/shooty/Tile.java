@@ -18,6 +18,8 @@ public class Tile {
     Step currentStep;
     int stepCount;
 
+    Path currentPath;
+
     Rectangle rect;
     Color c;
     float speed;
@@ -36,12 +38,20 @@ public class Tile {
             Step getStep = steps.get(stepCount);
             if(getStep.tick <= clock){
                 currentStep = getStep;
-                speedX = currentStep.speedX;
-                speedY = currentStep.speedY;
+                currentPath = getStep.path;
                 toFire = currentStep.fire;
                 stepCount++;
             }
         }
+
+        if(currentPath != null){
+            currentPath.tick();
+            speedX = currentPath.speedX;
+            speedY = currentPath.speedY;
+        }
+
+
+
         rect.x += speedX;
         rect.y += speedY;
     }

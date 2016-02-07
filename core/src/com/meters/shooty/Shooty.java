@@ -47,7 +47,9 @@ public class Shooty extends ApplicationAdapter {
 	int fps;
 	long lastTick;
 	long lastBulletTick;
-	long lastEnemyTick;
+
+	int clock;
+	int enemyClock;
 
 	int playerLevel = 1;
 
@@ -56,6 +58,8 @@ public class Shooty extends ApplicationAdapter {
 
 	float lastX;
 	float lastY;
+
+	ArrayList<Spawn> spawn;
 
 	@Override
 	public void create () {
@@ -79,6 +83,33 @@ public class Shooty extends ApplicationAdapter {
 		greenColor = new Color(0,1,0,1);
 
 		preparePlayer();
+		prepareSpawn();
+
+	}
+
+	private void prepareSpawn(){
+		spawn = new ArrayList<Spawn>();
+
+		int spawnClock = 60;
+		Spawn newSpawn;
+
+		for(int i = 0; i < 10; i++) {
+			newSpawn = new Spawn(spawnClock, 0, screenHeight);
+			newSpawn.steps.add(new Step(0, new Path(SPEED_DEFAULT, -SPEED_DEFAULT), false));
+			newSpawn.steps.add(new Step(30, new Path(0, -0), true));
+			newSpawn.steps.add(new Step(45, new Path(0, -SPEED_DEFAULT), false));
+			newSpawn.steps.add(new Step(75, new Path(-SPEED_DEFAULT, -SPEED_DEFAULT), true));
+			spawn.add(newSpawn);
+
+			newSpawn = new Spawn(spawnClock, screenWidth, screenHeight);
+			newSpawn.steps.add(new Step(0, new Path(-SPEED_DEFAULT, -SPEED_DEFAULT), false));
+			newSpawn.steps.add(new Step(30, new Path(0, -0), true));
+			newSpawn.steps.add(new Step(45, new Path(0, -SPEED_DEFAULT), false));
+			newSpawn.steps.add(new Step(75, new Path(SPEED_DEFAULT, -SPEED_DEFAULT), true));
+			spawn.add(newSpawn);
+			spawnClock+=30;
+		}
+
 
 	}
 
@@ -148,24 +179,25 @@ public class Shooty extends ApplicationAdapter {
 	}
 
 	private void spawnEnemy(){
-		if(System.currentTimeMillis() - lastEnemyTick < 400){
-			return;
+		clock++;
+
+		while(spawn.size() > enemyClock) {
+
+			Spawn getSpawn = spawn.get(enemyClock);
+			if(getSpawn.tick <= clock){
+				Tile newEnemy = new Tile();
+				newEnemy.rect = new Rectangle(screenWidth / 2, screenHeight - 20, 20, 20);
+				newEnemy.c = new Color(1, .5f, 0, 1);
+				newEnemy.steps = getSpawn.steps;
+
+				enemies.add(newEnemy);
+				enemyClock++;
+			}
+			else{
+				break;
+			}
+
 		}
-		lastEnemyTick = System.currentTimeMillis();
-
-		Tile newEnemy = new Tile();
-		newEnemy.rect = new Rectangle(screenWidth / 2, screenHeight - 20, 20, 20);
-		newEnemy.c = new Color(1,.5f,0,1);
-		newEnemy.steps = new ArrayList<Step>();
-
-		newEnemy.steps.add(new Step(0, SPEED_DEFAULT, -SPEED_DEFAULT, false));
-		newEnemy.steps.add(new Step(30, 0, SPEED_DEFAULT, true));
-		newEnemy.steps.add(new Step(60, -SPEED_DEFAULT, -SPEED_DEFAULT, false));
-		newEnemy.steps.add(new Step(90, 0, SPEED_DEFAULT, true));
-		newEnemy.steps.add(new Step(120, 0, -SPEED_DEFAULT, false));
-
-		enemies.add(newEnemy);
-
 	}
 
 	private void handleEnemy(){
