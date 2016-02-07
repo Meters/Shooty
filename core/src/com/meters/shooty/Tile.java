@@ -38,6 +38,7 @@ public class Tile {
                 currentStep = getStep;
                 speedX = currentStep.speedX;
                 speedY = currentStep.speedY;
+                toFire = currentStep.fire;
                 stepCount++;
             }
         }
