@@ -93,17 +93,14 @@ public class Shooty extends ApplicationAdapter {
 		int spawnClock = 60;
 		Spawn newSpawn;
 
-		for(int i = 0; i < 10; i++) {
+		for(int i = 0; i < 5; i++) {
 			newSpawn = new Spawn(spawnClock, 0, screenHeight);
 			newSpawn.steps.add(new Step(0, new Path(SPEED_DEFAULT, -SPEED_DEFAULT), false));
 			newSpawn.steps.add(new Step(30, new Path(0, -0), true));
-			newSpawn.steps.add(new Step(45, new Path(50, SPEED_DEFAULT, -1f, -1f, 0), false));
-			newSpawn.steps.add(new Step(60, null, true));
-			newSpawn.steps.add(new Step(75, null, true));
-			newSpawn.steps.add(new Step(90, null, true));
-			newSpawn.steps.add(new Step(105, null, true));
-			newSpawn.steps.add(new Step(645, new Path(-SPEED_DEFAULT, -SPEED_DEFAULT), true));
+			newSpawn.steps.add(new Step(45, new Path(0, -SPEED_DEFAULT), false));
+			newSpawn.steps.add(new Step(75, new Path(-SPEED_DEFAULT, -SPEED_DEFAULT), true));
 			spawn.add(newSpawn);
+			spawnClock+=10;
 
 			newSpawn = new Spawn(spawnClock, screenWidth, screenHeight);
 			newSpawn.steps.add(new Step(0, new Path(-SPEED_DEFAULT, -SPEED_DEFAULT), false));
@@ -111,7 +108,32 @@ public class Shooty extends ApplicationAdapter {
 			newSpawn.steps.add(new Step(45, new Path(0, -SPEED_DEFAULT), false));
 			newSpawn.steps.add(new Step(75, new Path(SPEED_DEFAULT, -SPEED_DEFAULT), true));
 			spawn.add(newSpawn);
-			spawnClock+=30;
+			spawnClock+=20;
+		}
+
+
+		for(int i = 0; i < 5; i++) {
+			newSpawn = new Spawn(spawnClock, 0, 0-20);
+			newSpawn.steps.add(new Step(0, new Path(0, SPEED_DEFAULT), false));
+			newSpawn.steps.add(new Step(30, null, true));
+			newSpawn.steps.add(new Step(60, null, true));
+			newSpawn.steps.add(new Step(60+75, new Path(50, SPEED_DEFAULT, 1f, 1f, 0), false));
+			newSpawn.steps.add(new Step(60+75+30, null, true));
+			newSpawn.steps.add(new Step(60+75+60, null, true));
+			newSpawn.steps.add(new Step(60+75+180, new Path(0, -SPEED_DEFAULT), true));
+			spawn.add(newSpawn);
+			spawnClock+=10;
+
+			newSpawn = new Spawn(spawnClock, screenWidth-20, 0-20);
+			newSpawn.steps.add(new Step(0, new Path(0, SPEED_DEFAULT), false));
+			newSpawn.steps.add(new Step(30, null, true));
+			newSpawn.steps.add(new Step(60, null, true));
+			newSpawn.steps.add(new Step(60+75, new Path(50, SPEED_DEFAULT, -1f, 1f, 0), false));
+			newSpawn.steps.add(new Step(60+75+30, null, true));
+			newSpawn.steps.add(new Step(60+75+60, null, true));
+			newSpawn.steps.add(new Step(60+75+180, new Path(0, -SPEED_DEFAULT), true));
+			spawn.add(newSpawn);
+			spawnClock+=20;
 		}
 
 
@@ -190,7 +212,7 @@ public class Shooty extends ApplicationAdapter {
 			Spawn getSpawn = spawn.get(enemyClock);
 			if(getSpawn.tick <= clock){
 				Tile newEnemy = new Tile();
-				newEnemy.rect = new Rectangle(screenWidth / 2, screenHeight - 20, 20, 20);
+				newEnemy.rect = new Rectangle(getSpawn.x, getSpawn.y, 20, 20);
 				newEnemy.c = new Color(1, .5f, 0, 1);
 				newEnemy.steps = getSpawn.steps;
 
@@ -298,8 +320,8 @@ public class Shooty extends ApplicationAdapter {
 
 		float angle = (float)Math.atan(diffX / diffY);
 
-		diffX = (float) (Math.sin(angle) * SPEED_DEFAULT * 2.5f);
-		diffY = (float) (Math.cos(angle) * SPEED_DEFAULT * 2.5f);
+		diffX = (float) (Math.sin(angle) * SPEED_DEFAULT);
+		diffY = (float) (Math.cos(angle) * SPEED_DEFAULT);
 
 		Tile newBullet = new Tile();
 		newBullet.rect = new Rectangle(enemy.rect.x, enemy.rect.y, 5, 5);
