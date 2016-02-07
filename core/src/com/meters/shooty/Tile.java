@@ -38,17 +38,20 @@ public class Tile {
             Step getStep = steps.get(stepCount);
             if(getStep.tick <= clock){
                 currentStep = getStep;
-                currentPath = getStep.path;
+                if(getStep.path != null) {
+                    currentPath = getStep.path;
+                }
                 toFire = currentStep.fire;
                 stepCount++;
             }
         }
 
-        if(currentPath != null){
+        if(currentPath != null) {
             currentPath.tick();
             speedX = currentPath.speedX;
             speedY = currentPath.speedY;
         }
+
 
 
 

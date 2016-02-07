@@ -97,8 +97,12 @@ public class Shooty extends ApplicationAdapter {
 			newSpawn = new Spawn(spawnClock, 0, screenHeight);
 			newSpawn.steps.add(new Step(0, new Path(SPEED_DEFAULT, -SPEED_DEFAULT), false));
 			newSpawn.steps.add(new Step(30, new Path(0, -0), true));
-			newSpawn.steps.add(new Step(45, new Path(0, -SPEED_DEFAULT), false));
-			newSpawn.steps.add(new Step(75, new Path(-SPEED_DEFAULT, -SPEED_DEFAULT), true));
+			newSpawn.steps.add(new Step(45, new Path(50, SPEED_DEFAULT, -1f, -1f, 0), false));
+			newSpawn.steps.add(new Step(60, null, true));
+			newSpawn.steps.add(new Step(75, null, true));
+			newSpawn.steps.add(new Step(90, null, true));
+			newSpawn.steps.add(new Step(105, null, true));
+			newSpawn.steps.add(new Step(645, new Path(-SPEED_DEFAULT, -SPEED_DEFAULT), true));
 			spawn.add(newSpawn);
 
 			newSpawn = new Spawn(spawnClock, screenWidth, screenHeight);
@@ -152,7 +156,7 @@ public class Shooty extends ApplicationAdapter {
 				player.rect.y = (lastY + SIZE_PLAYER / 2) - (player.rect.height / 2);
 
 				player.c.a = 1 - ((TIME_DEAD - player.clock) / TIME_EXPLODE);
-				System.out.println(""+player.c.a);
+//				System.out.println(""+player.c.a);
 			}
 			else{
 				player.rect.width = 0;
